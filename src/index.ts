@@ -3,6 +3,7 @@ import express from "express";
 import responseTime from "response-time";
 import {createClient} from "redis";
 import dotenv from "dotenv"
+import {promisify} from "util"
 
 const app = express();
 dotenv.config();
@@ -12,6 +13,9 @@ app.use(responseTime());
 const client = createClient({
     url: process.env.URL_REDIS
 })
+
+const GET_ASYNC = promisify(client.get).bind(client)
+const SET_ASYNC = promisify(client.set).bind(client)
 
 client.on('error', err => console.log('Redis Client Error', err));
 client.connect();
